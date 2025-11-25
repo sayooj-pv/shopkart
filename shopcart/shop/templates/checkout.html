@@ -1,0 +1,30 @@
+{% extends 'layouts/main.html' %}
+{% block content %}
+
+<br>
+
+<br>
+<br>
+<br>
+ 
+<h2>Checkout</h2>
+        
+<h4>Total Amount:₹ {{ total }}</h4>
+<br>
+<form action="{% url 'create_order' %}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="amount" value="{{ total }}">
+
+    <button class="btn btn-primary">Pay Online</button>
+</form>
+</div>
+<br>
+
+<form action="{% url 'payment_success' %}">
+    <button class="btn btn-warning">Cash On Delivery</button>
+</form>
+<br>
+<br><br>
+<br>
+
+{% endblock %}
