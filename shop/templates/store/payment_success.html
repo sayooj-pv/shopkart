@@ -1,9 +1,0 @@
-{% extends 'store/base.html' %}
-{% block content %}
-<h1>Payment Successful</h1>
-<p>Your payment has been received.</p>
-{% if order %}
-<p>Order ID: {{ order.id }}</p>
-{% endif %}
-<a href="/" class="btn btn-primary">Continue Shopping</a>
-{% endblock %}
