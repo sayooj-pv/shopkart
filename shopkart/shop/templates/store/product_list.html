@@ -1,0 +1,186 @@
+{% extends "store/base.html" %}
+{% block content %}
+{% include 'store/slider.html' %}
+<br>
+<br>
+<h1 class="h1">Products</h1>
+
+<div class="product-grid">
+  
+    {% for product in products %}
+    <div class="product-card">
+
+        <!-- Favorite Button -->
+        <div class="fav-btn" onclick="toggleFavorite('{{ product.id }}')">
+            <i id="fav-{{ product.id }}" 
+               class="fa-regular fa-heart fav-icon"></i>
+        </div>
+
+        <!-- Product Image -->
+        {% if product.image %}
+        <img src="{{ product.image.url }}" class="product-img">
+        {% endif %}
+
+        <div class="product-info">
+            <h3 class="product-name">
+                <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+            </h3>
+
+            <!-- Price Section -->
+            <div class="price-box">
+                {% if product.offer_price %}
+                    <span class="offer-price">₹{{ product.offer_price }}</span>
+                    <span class="old-price">₹{{ product.price }}</span>
+                {% else %}
+                    <span class="offer-price">₹{{ product.price }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Add to Cart -->
+
+            
+            <form action="{% url 'store:cart_add' product.id %}" method="post" onclick="addToCart('{{ product.id }}')">
+            {% csrf_token %}
+
+            <button class="add-btn" type="submit">Add to Cart</button>
+            </form>
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+
+
+
+
+<!-- JS -->
+<script>
+function addToCart(productId) {
+    alert("Product added to cart: " + productId);
+}
+
+
+function toggleFavorite(id) {
+    let heart = document.getElementById("fav-" + id);
+
+    heart.classList.toggle("fa-regular");
+    heart.classList.toggle("fa-solid");
+    heart.classList.add("pulse");
+
+    setTimeout(() => heart.classList.remove("pulse"), 300);
+
+    // Send request (optional)
+    fetch(`/favorite/${id}/`)
+        .then(res => res.json())
+        .then(data => console.log(data.message));
+}
+</script>
+
+<style>
+/* Grid */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 70px;
+    margin-top: 50px;
+    margin-left: 50px;
+}
+.h1{
+    color: #2b67d6;
+    font-size: 50px;
+    font-weight: 400;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Product Card */
+.product-card {
+    position: relative;
+    background: #fefcfc;
+    padding: 15px;
+    
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: 0.3s;
+    
+}
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Favorite Button */
+.fav-btn {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    cursor: pointer;
+    font-size: 22px;
+}
+
+.fav-icon.fa-solid {
+    color: #e60023;
+}
+
+/* Heart Animation */
+.pulse {
+    animation: pulseEffect 0.3s ease;
+}
+
+@keyframes pulseEffect {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.4); }
+    100% { transform: scale(1); }
+}
+
+/* Image */
+.product-img {
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* Product Info */
+.product-name a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Price */
+.price-box {
+    margin: 5px 0;
+}
+
+.offer-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #e60023;
+}
+
+.old-price {
+    margin-left: 8px;
+    color: #888;
+    text-decoration: line-through;
+}
+
+/* Add Button */
+.add-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 8px;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.add-btn:hover {
+    background: #0056b3;
+}
+</style>
+
+{% endblock %}

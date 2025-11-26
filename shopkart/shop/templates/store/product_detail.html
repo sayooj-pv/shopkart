@@ -1,0 +1,159 @@
+{% extends "store/base.html" %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div class="product-container">
+
+    <div class="product-left">
+        <h2 class="product-title">{{ product.name }}</h2>
+        <img src="{{ product.image.url }}" class="product-image">
+        
+        
+    </div>
+    <div class="col-8 my-3">
+    
+        <p class="product-desc">{{ product.description|truncatechars:80 }}</p>
+
+
+    {% if product.offer_price %}
+    
+        <span class="offer-price">₹{{ product.offer_price }}</span>
+        <span class="old-price">₹{{ product.price }}</span>
+
+        <span class="discount">
+            {{ product.get_discount_percentage }}% OFF
+        </span>
+    {% else %}
+        <span class="offer-price">₹{{ product.price }}</span>
+    {% endif %}
+
+            
+<form action="{% url 'store:cart_add' product.id %}" method="post" class="cart-form">
+            {% csrf_token %}
+            <label>Quantity:</label>
+            {{ form.quantity }}
+
+            <button class="cart-btn" type="submit">Add to Cart</button>
+    </form>
+    
+    <button class="fav1" onclick="toggleFavorite('{{ product.id }}')">
+            <i id="fav-{{ product.id }}" 
+               class="fa-regular fa-heart fav-icon ">Add to favorite</i>
+            </button>
+        
+        </div>
+            
+        
+        
+            
+       
+
+       
+
+        <!-- Add to Cart Form -->
+        
+
+    </div>
+</div>
+<script>
+function toggleFavorite(id) {
+    let heart = document.getElementById("fav-" + id);
+
+    heart.classList.toggle("fa-regular");
+    heart.classList.toggle("fa-solid");
+    heart.classList.add("pulse");
+
+    setTimeout(() => heart.classList.remove("pulse"), 300);
+
+    // Send request (optional)
+    fetch(`/favorite/${id}/`)
+        .then(res => res.json())
+        .then(data => console.log(data.message));
+}
+</script>
+
+<style>
+  .product-container {
+    display: flex;
+    gap: 5px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 20px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.product-image {
+    height: 500px;
+    width: 500px;
+    border-radius: 15px;
+    object-fit: cover;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+.cart-form{
+    width: 350px;
+
+}
+
+.fav-icon.fa-solid {
+    color: #f4f1f1;
+}
+.fav1{
+    width: 180px;
+    height: 50px;
+    margin-top: 5px;
+    background: #e1071a;
+    font-size: 13px;
+    font-family: 'Times New Roman', Times, serif;
+    border-radius: 10px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    
+}
+.fav1:hover{
+    background: #ec7b7b;
+}
+
+
+.cart-btn {
+    background: #039444;
+    padding: 10px 20px;
+    border-radius: 10px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 17px;
+}
+
+.cart-btn:hover {
+    background: #217dbb;
+}
+.offer-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #27ae60;
+}
+
+.old-price {
+    font-size: 16px;
+    color: #777;
+    text-decoration: line-through;
+    margin-left: 8px;
+}
+
+.discount {
+    background: #ff3e3e;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 13px;
+    margin-left: 8px;
+    height: 30px;
+}
+
+
+</style>
+
+{% endblock %}

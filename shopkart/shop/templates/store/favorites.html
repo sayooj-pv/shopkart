@@ -1,0 +1,42 @@
+{% extends "store/base.html" %}
+
+{% block content %}
+<h1>Your Favorites</h1>
+{% for fav in favs %}
+<div class="product">
+    <img src="{{ fav.product.image.url }}">
+    <h3>{{ fav.product.name }}</h3>
+
+    <button><a href="{% url 'store:favorites_remove' fav.product.id %}"
+       class="btn ">Remove</a></button>
+</div>
+{% endfor %}
+
+
+<style>
+.product{
+    align-items: center;
+
+}
+.product img{
+    width: 300px;
+    height: 300px;
+}
+.btn {
+    color: rgb(233, 226, 226);
+    padding-bottom: 20px;
+    cursor: pointer;
+    
+}
+h1{
+    color: rgb(177, 63, 7);
+}
+button{
+    height: 30px;
+    background: red;
+    border-radius: 10px;
+    margin-left: 10px;
+}
+</style>
+
+{% endblock %}
