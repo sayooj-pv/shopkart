@@ -1,0 +1,105 @@
+{% extends 'store/base.html' %}
+{% block content %}
+
+<h1>Your Cart</h1>
+
+{% if cart.items.count == 0 %}
+  <p>Cart is empty</p>
+{% else %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Qty</th>
+        <th>Subtotal</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for item in cart.items.all %}
+      <tr>
+
+        <td>{{ item.product.name }}</td>
+
+        <td>
+          <div class="qty-box">
+            <button class="qty-btn" onclick="updateQty('{{ item.id }}', 'minus')">−</button>
+
+            <input type="text" id="qty-{{ item.id }}" value="{{ item.quantity }}" 
+                   class="qty-input" readonly>
+
+            <button class="qty-btn" onclick="updateQty('{{ item.id }}', 'plus')">+</button>
+          </div>
+        </td>
+
+        <td>{{ item.subtotal }}</td>
+
+        <td>
+          <a style="color: red;" href="{% url 'store:cart_remove' item.id %}">Remove</a>
+        </td>
+
+      </tr>
+      {% endfor %}
+    </tbody>
+
+  </table>
+
+  <p>Total: {{ cart.total }}</p>
+
+  <a class="btn btn-success" href="{% url 'store:checkout' %}">Checkout</a>
+
+{% endif %}
+<script>
+function updateQty(itemId, action) {
+    let input = document.getElementById("qty-" + itemId);
+    let qty = parseInt(input.value);
+
+    if (action === "minus" && qty > 1) qty--;
+    if (action === "plus") qty++;
+
+    input.value = qty;
+
+    // Django update URL (you must create this endpoint)
+    fetch(`/update-cart/${itemId}/${qty}/`)
+        .then(response => response.json())
+        .then(data => {
+            location.reload(); // refresh subtotal + total
+        });
+}
+</script>
+<style>
+  .qty-box {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.qty-btn {
+    width: 30px;
+    height: 30px;
+    background: #3498db;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.qty-btn:hover {
+    background: #2a7cbc;
+}
+
+.qty-input {
+    width: 45px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 4px;
+    font-size: 16px;
+    background: white;
+}
+
+</style>
+
+{% endblock %}
